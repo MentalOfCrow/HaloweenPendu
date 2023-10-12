@@ -23,13 +23,15 @@ func main() {
 	motADeviner := mots[rand.Intn(len(mots))]
 	motADeviner = strings.ToLower(motADeviner) // Convertir en minuscules pour la comparaison
 	lettresDevinees := make(map[rune]bool)
-	maxTentatives := 6
+	maxTentatives := 10
 	tentativesRestantes := maxTentatives
+	pendu := ""
 
 	fmt.Println("Bienvenue dans le jeu du pendu en Go!")
 
 	for {
 		fmt.Println()
+		afficherPendu(pendu)
 		afficherMot(motADeviner, lettresDevinees)
 
 		if victoire(motADeviner, lettresDevinees) {
@@ -59,6 +61,7 @@ func main() {
 		} else {
 			fmt.Printf("Raté ! La lettre %c n'est pas dans le mot.\n", lettre)
 			tentativesRestantes--
+			pendu = ajouterEtapePendu(pendu, maxTentatives-tentativesRestantes)
 		}
 
 		if tentativesRestantes == 0 {
@@ -114,4 +117,29 @@ func victoire(mot string, lettresDevinees map[rune]bool) bool {
 		}
 	}
 	return true
+}
+
+func afficherPendu(pendu string) {
+	fmt.Print(pendu)
+}
+
+func ajouterEtapePendu(pendu string, etape int) string {
+	etapePendu := []string{
+		"",
+		"      |  \n      |  \n      |  \n      |  \n      |  \n=========  \n\n",
+		"  +---+  \n      |  \n      |  \n      |  \n      |  \n      |  \n=========  \n\n",
+		"  +---+  \n  |   |  \n      |  \n      |  \n      |  \n      |  \n=========  \n\n",
+		"  +---+  \n  |   |  \n  O   |  \n      |  \n      |  \n      |  \n=========  \n\n",
+		"  +---+  \n  |   |  \n  O   |  \n  |   |  \n      |  \n      |  \n=========  \n\n",
+		"  +---+  \n  |   |  \n  O   |  \n /|   |  \n      |  \n      |  \n=========  \n\n",
+		"  +---+  \n  |   |  \n  O   |  \n /|\\  |  \n      |  \n      |  \n=========  \n\n",
+		"  +---+  \n  |   |  \n  O   |  \n /|\\  |  \n /    |  \n      |  \n=========  \n\n",
+		"  +---+  \n  |   |  \n  O   |  \n /|\\  |  \n / \\  |  \n      |  \n=========\n\n",
+	}
+
+	if etape < len(etapePendu) {
+		return pendu + etapePendu[etape]
+	}
+
+	return pendu
 }
