@@ -23,6 +23,7 @@ func main() {
 	motADeviner := mots[rand.Intn(len(mots))]
 	motADeviner = strings.ToLower(motADeviner) // Convertir en minuscules pour la comparaison
 	lettresDevinees := make(map[rune]bool)
+	lettresUtilisees := []rune{}
 	maxTentatives := 10
 	tentativesRestantes := maxTentatives
 	pendu := ""
@@ -36,10 +37,13 @@ func main() {
 	fmt.Println("██║  ██║██║  ██║██║ ╚████║╚██████╔╝██║ ╚═╝ ██║██║  ██║██║ ╚████║    ██║  ██║██║  ██║███████╗███████╗╚██████╔╝╚███╔███╔╝███████╗███████╗██║ ╚████║")
 	fmt.Println("╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝    ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚══════╝ ╚═════╝  ╚══╝╚══╝ ╚══════╝╚══════╝╚═╝  ╚═══╝")
 
+	// On a tous fait à la main
+
 	for {
 		fmt.Println()
 		afficherPendu(pendu)
 		afficherMot(motADeviner, lettresDevinees)
+		fmt.Printf("Lettres utilisées : %s\n", strings.Join(convertirEnChaines(lettresUtilisees), ", "))
 
 		if victoire(motADeviner, lettresDevinees) {
 			fmt.Println("Félicitations, vous avez gagné ! Le mot était", motADeviner)
@@ -57,7 +61,7 @@ func main() {
 		}
 
 		lettre := rune(tentative[0])
-		if lettresDevinees[lettre] {
+		if lettresDevinees[lettre] || contientLettre(lettre, lettresUtilisees) {
 			fmt.Println("Vous avez déjà deviné cette lettre.")
 			continue
 		}
@@ -70,6 +74,8 @@ func main() {
 			tentativesRestantes--
 			pendu = ajouterEtapePendu(pendu, maxTentatives-tentativesRestantes)
 		}
+
+		lettresUtilisees = append(lettresUtilisees, lettre)
 
 		if tentativesRestantes == 0 {
 			fmt.Println("Désolé, vous avez épuisé toutes vos tentatives. Le mot était", motADeviner)
@@ -149,4 +155,21 @@ func ajouterEtapePendu(pendu string, etape int) string {
 	}
 
 	return pendu
+}
+
+func contientLettre(lettre rune, lettres []rune) bool {
+	for _, l := range lettres {
+		if l == lettre {
+			return true
+		}
+	}
+	return false
+}
+
+func convertirEnChaines(runes []rune) []string {
+	chaines := make([]string, len(runes))
+	for i, r := range runes {
+		chaines[i] = string(r)
+	}
+	return chaines
 }

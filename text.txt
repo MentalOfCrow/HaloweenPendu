@@ -1,10 +1,10 @@
 Sorcière
-Fantôme
-Loup-garou
+Fantome
+Loup garou
 Vampire
 Momie
 Zombie
-Chauve-souris
+Chauve souris
 Citrouille
 Goule
 Squelette
@@ -13,7 +13,7 @@ Cimetière
 Chaudron
 Balai
 Magicien
-Crâne
+Crane
 Potion
 Épouvantail
 Frankenstein
@@ -23,7 +23,7 @@ Horrifiant
 Épouvantable
 Monstrueux
 Mortel
-Mort-vivant
+Mort vivant
 Mortuaire
 Mortifère
 Sanglant
@@ -35,6 +35,6 @@ Hanté
 Ténébreux
 Diable
 Maquillage
-Château hanté
+Chateau hanté
 Déguisement
 
