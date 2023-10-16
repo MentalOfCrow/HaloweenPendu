@@ -10,8 +10,49 @@ import (
 )
 
 func main() {
-	// Charger les mots depuis un fichier
-	mots, err := chargerMotsDepuisFichier("text.txt")
+	for {
+		fmt.Println("BIENVENUE DANS LE JEU DU PENDU EN GO !!!")
+		fmt.Println("")
+
+		fmt.Println("██╗  ██╗ █████╗ ███╗   ██╗ ██████╗ ███╗   ███╗ █████╗ ███╗   ██╗    ██╗  ██╗ █████╗ ██╗     ██╗      ██████╗ ██╗    ██╗███████╗███████╗███╗   ██╗")
+		fmt.Println("██║  ██║██╔══██╗████╗  ██║██╔════╝ ████╗ ████║██╔══██╗████╗  ██║    ██║  ██║██╔══██╗██║     ██║     ██╔═══██╗██║    ██║██╔════╝██╔════╝████╗  ██║")
+		fmt.Println("███████║███████║██╔██╗ ██║██║  ███╗██╔████╔██║███████║██╔██╗ ██║    ███████║███████║██║     ██║     ██║   ██║██║ █╗ ██║█████╗  █████╗  ██╔██╗ ██║")
+		fmt.Println("██╔══██║██╔══██║██║╚██╗██║██║   ██║██║╚██╔╝██║██╔══██║██║╚██╗██║    ██╔══██║██╔══██║██║     ██║     ██║   ██║██║███╗██║██╔══╝  ██╔══╝  ██║╚██╗██║")
+		fmt.Println("██║  ██║██║  ██║██║ ╚████║╚██████╔╝██║ ╚═╝ ██║██║  ██║██║ ╚████║    ██║  ██║██║  ██║███████╗███████╗╚██████╔╝╚███╔███╔╝███████╗███████╗██║ ╚████║")
+		fmt.Println("╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝    ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚══════╝ ╚═════╝  ╚══╝╚══╝ ╚══════╝╚══════╝╚═╝  ╚═══╝")
+
+		fmt.Println("Bienvenue dans le jeu du pendu ! Choisissez un mode :")
+		fmt.Println("1. Mode Facile")
+		fmt.Println("2. Mode Moyen")
+		fmt.Println("3. Mode Difficile")
+		fmt.Println("4. Mode Halloween")
+		fmt.Println("5. Quitter")
+
+		var choixMode string
+		fmt.Scanln(&choixMode)
+
+		switch choixMode {
+		case "1":
+			fmt.Println("Vous avez choisi le Mode Facile !")
+			jouerJeu("TextAFacile.txt")
+		case "2":
+			fmt.Println("Vous avez choisi le Mode Moyen !")
+			jouerJeu("TextBMoyen.txt")
+		case "3":
+			fmt.Println("Vous avez choisi le Mode Difficile !")
+			jouerJeu("TextCDifficile.txt")
+		case "4":
+			fmt.Println("Vous avez choisi le Mode Halloween !")
+			jouerJeu("TextDHalloween.txt")
+		case "5":
+			fmt.Println("Au revoir !")
+			return
+		}
+	}
+}
+
+func jouerJeu(nomFichier string) {
+	mots, err := chargerMotsDepuisFichier(nomFichier)
 	if err != nil {
 		fmt.Println("Erreur lors de la lecture du fichier :", err)
 		return
@@ -19,25 +60,16 @@ func main() {
 
 	rand.Seed(time.Now().UnixNano())
 
-	// Sélectionnez un mot au hasard
-	motADeviner := mots[rand.Intn(len(mots))]
-	motADeviner = strings.ToLower(motADeviner) // Convertir en minuscules pour la comparaison
+	motADeviner := choisirMotAvecLettres(mots)
+	motADeviner = strings.ToLower(motADeviner)
 	lettresDevinees := make(map[rune]bool)
 	lettresUtilisees := []rune{}
 	maxTentatives := 10
 	tentativesRestantes := maxTentatives
 	pendu := ""
 
-	fmt.Println("BIENVENUE DANS LE JEU DU PENDU EN GO !!!")
-	fmt.Println("")
-	fmt.Println("██╗  ██╗ █████╗ ███╗   ██╗ ██████╗ ███╗   ███╗ █████╗ ███╗   ██╗    ██╗  ██╗ █████╗ ██╗     ██╗      ██████╗ ██╗    ██╗███████╗███████╗███╗   ██╗")
-	fmt.Println("██║  ██║██╔══██╗████╗  ██║██╔════╝ ████╗ ████║██╔══██╗████╗  ██║    ██║  ██║██╔══██╗██║     ██║     ██╔═══██╗██║    ██║██╔════╝██╔════╝████╗  ██║")
-	fmt.Println("███████║███████║██╔██╗ ██║██║  ███╗██╔████╔██║███████║██╔██╗ ██║    ███████║███████║██║     ██║     ██║   ██║██║ █╗ ██║█████╗  █████╗  ██╔██╗ ██║")
-	fmt.Println("██╔══██║██╔══██║██║╚██╗██║██║   ██║██║╚██╔╝██║██╔══██║██║╚██╗██║    ██╔══██║██╔══██║██║     ██║     ██║   ██║██║███╗██║██╔══╝  ██╔══╝  ██║╚██╗██║")
-	fmt.Println("██║  ██║██║  ██║██║ ╚████║╚██████╔╝██║ ╚═╝ ██║██║  ██║██║ ╚████║    ██║  ██║██║  ██║███████╗███████╗╚██████╔╝╚███╔███╔╝███████╗███████╗██║ ╚████║")
-	fmt.Println("╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝    ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚══════╝ ╚═════╝  ╚══╝╚══╝ ╚══════╝╚══════╝╚═╝  ╚═══╝")
-
-	// On a tous fait à la main
+	fmt.Println("Le jeu du pendu commence !")
+	fmt.Println("Bonne chance !")
 
 	for {
 		fmt.Println()
@@ -82,13 +114,28 @@ func main() {
 			break
 		}
 	}
+
+	// L'utilisateur peut choisir de rejouer ou de quitter le jeu.
+	fmt.Print("Voulez-vous jouer encore ? (oui/non): ")
+	var reponse string
+	fmt.Scanln(&reponse)
+	if strings.ToLower(reponse) != "oui" {
+		fmt.Println("Au revoir !")
+	}
+}
+
+func choisirMotAvecLettres(mots []string) string {
+	rand.Seed(time.Now().UnixNano())
+	motADeviner := mots[rand.Intn(len(mots))]
+
+	return motADeviner
 }
 
 func afficherMot(mot string, lettresDevinees map[rune]bool) {
 	for _, c := range mot {
 		if c == ' ' {
 			fmt.Print("  ")
-		} else if lettresDevinees[rune(c)] {
+		} else if lettresDevinees[rune(c)] || c == 'X' || c == 'Y' {
 			fmt.Printf("%c ", c)
 		} else {
 			fmt.Print("_ ")
@@ -125,7 +172,7 @@ func chargerMotsDepuisFichier(filename string) ([]string, error) {
 
 func victoire(mot string, lettresDevinees map[rune]bool) bool {
 	for _, c := range mot {
-		if c != ' ' && !lettresDevinees[rune(c)] {
+		if c != ' ' && !lettresDevinees[rune(c)] && c != 'X' && c != 'Y' {
 			return false
 		}
 	}
