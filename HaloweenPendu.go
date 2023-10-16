@@ -10,10 +10,12 @@ import (
 )
 
 func main() {
-	for {
-		fmt.Println("BIENVENUE DANS LE JEU DU PENDU EN GO !!!")
-		fmt.Println("")
+	// Affiche le message de bienvenue
+	fmt.Println("BIENVENUE DANS LE JEU DU PENDU EN GO !!!")
+	fmt.Println("")
 
+	for {
+		// Affiche un texte artistique (ASCII art)
 		fmt.Println("██╗  ██╗ █████╗ ███╗   ██╗ ██████╗ ███╗   ███╗ █████╗ ███╗   ██╗    ██╗  ██╗ █████╗ ██╗     ██╗      ██████╗ ██╗    ██╗███████╗███████╗███╗   ██╗")
 		fmt.Println("██║  ██║██╔══██╗████╗  ██║██╔════╝ ████╗ ████║██╔══██╗████╗  ██║    ██║  ██║██╔══██╗██║     ██║     ██╔═══██╗██║    ██║██╔════╝██╔════╝████╗  ██║")
 		fmt.Println("███████║███████║██╔██╗ ██║██║  ███╗██╔████╔██║███████║██╔██╗ ██║    ███████║███████║██║     ██║     ██║   ██║██║ █╗ ██║█████╗  █████╗  ██╔██╗ ██║")
@@ -21,6 +23,7 @@ func main() {
 		fmt.Println("██║  ██║██║  ██║██║ ╚████║╚██████╔╝██║ ╚═╝ ██║██║  ██║██║ ╚████║    ██║  ██║██║  ██║███████╗███████╗╚██████╔╝╚███╔███╔╝███████╗███████╗██║ ╚████║")
 		fmt.Println("╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝    ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚══════╝ ╚═════╝  ╚══╝╚══╝ ╚══════╝╚══════╝╚═╝  ╚═══╝")
 
+		// Invite l'utilisateur à choisir un mode de jeu
 		fmt.Println("Bienvenue dans le jeu du pendu ! Choisissez un mode :")
 		fmt.Println("1. Mode Facile")
 		fmt.Println("2. Mode Moyen")
@@ -52,90 +55,99 @@ func main() {
 }
 
 func jouerJeu(nomFichier string) {
-	mots, err := chargerMotsDepuisFichier(nomFichier)
-	if err != nil {
-		fmt.Println("Erreur lors de la lecture du fichier :", err)
-		return
-	}
-
-	rand.Seed(time.Now().UnixNano())
-
-	motADeviner := choisirMotAvecLettres(mots)
-	motADeviner = strings.ToLower(motADeviner)
-	lettresDevinees := make(map[rune]bool)
-	lettresUtilisees := []rune{}
-	maxTentatives := 10
-	tentativesRestantes := maxTentatives
-	pendu := ""
-
-	fmt.Println("Le jeu du pendu commence !")
-	fmt.Println("Bonne chance !")
-
 	for {
-		fmt.Println()
-		afficherPendu(pendu)
-		afficherMot(motADeviner, lettresDevinees)
-		fmt.Printf("Lettres utilisées : %s\n", strings.Join(convertirEnChaines(lettresUtilisees), ", "))
-
-		if victoire(motADeviner, lettresDevinees) {
-			fmt.Println("Félicitations, vous avez gagné ! Le mot était", motADeviner)
-			break
+		mots, err := chargerMotsDepuisFichier(nomFichier)
+		if err != nil {
+			fmt.Println("Erreur lors de la lecture du fichier :", err)
+			return
 		}
 
-		fmt.Printf("Tentatives restantes: %d\n", tentativesRestantes)
-		fmt.Print("Devinez une lettre: ")
-		var tentative string
-		fmt.Scanln(&tentative)
+		rand.Seed(time.Now().UnixNano())
 
-		if len(tentative) != 1 || !estLettreValide(tentative) {
-			fmt.Println("Entrez une seule lettre valide à la fois.")
-			continue
+		motADeviner := choisirMotAvecLettres(mots)
+		motADeviner = strings.ToLower(motADeviner)
+		lettresDevinees := make(map[rune]bool)
+		lettresUtilisees := []rune{}
+		maxTentatives := 10
+		tentativesRestantes := maxTentatives
+		pendu := ""
+
+		fmt.Println("Le jeu du pendu commence !")
+		fmt.Println("Bonne chance !")
+
+		for {
+			// Affiche le pendu actuel
+			fmt.Println()
+			afficherPendu(pendu)
+			// Affiche le mot avec les lettres devinées et non devinées
+			afficherMot(motADeviner, lettresDevinees)
+			// Affiche les lettres utilisées
+			fmt.Printf("Lettres utilisées : %s\n", strings.Join(convertirEnChaines(lettresUtilisees), ", "))
+
+			if victoire(motADeviner, lettresDevinees) {
+				fmt.Println("Félicitations, vous avez gagné ! Le mot était", motADeviner)
+				break
+			}
+
+			fmt.Printf("Tentatives restantes: %d\n", tentativesRestantes)
+			fmt.Print("Devinez une lettre: ")
+			var tentative string
+			fmt.Scanln(&tentative)
+
+			if len(tentative) != 1 || !estLettreValide(tentative) {
+				fmt.Println("Entrez une seule lettre valide à la fois.")
+				continue
+			}
+
+			lettre := rune(tentative[0])
+			if lettresDevinees[lettre] || contientLettre(lettre, lettresUtilisees) {
+				fmt.Println("Vous avez déjà deviné cette lettre.")
+				continue
+			}
+
+			if strings.ContainsRune(motADeviner, lettre) {
+				fmt.Println("Bonne devinette !")
+				lettresDevinees[lettre] = true
+			} else {
+				fmt.Printf("Raté ! La lettre %c n'est pas dans le mot.\n", lettre)
+				tentativesRestantes--
+				pendu = ajouterEtapePendu(pendu, maxTentatives-tentativesRestantes)
+			}
+
+			lettresUtilisees = append(lettresUtilisees, lettre)
+
+			if tentativesRestantes == 0 {
+				fmt.Println("Désolé, vous avez épuisé toutes vos tentatives. Le mot était", motADeviner)
+				break
+			}
 		}
 
-		lettre := rune(tentative[0])
-		if lettresDevinees[lettre] || contientLettre(lettre, lettresUtilisees) {
-			fmt.Println("Vous avez déjà deviné cette lettre.")
-			continue
+		// Demande si l'utilisateur souhaite rejouer
+		var reponse string
+		fmt.Print("Voulez-vous jouer encore ? (oui/non): ")
+		fmt.Scanln(&reponse)
+		if reponse != "oui" {
+			fmt.Println("Au revoir !")
+			return
 		}
-
-		if strings.ContainsRune(motADeviner, lettre) {
-			fmt.Println("Bonne devinette !")
-			lettresDevinees[lettre] = true
-		} else {
-			fmt.Printf("Raté ! La lettre %c n'est pas dans le mot.\n", lettre)
-			tentativesRestantes--
-			pendu = ajouterEtapePendu(pendu, maxTentatives-tentativesRestantes)
-		}
-
-		lettresUtilisees = append(lettresUtilisees, lettre)
-
-		if tentativesRestantes == 0 {
-			fmt.Println("Désolé, vous avez épuisé toutes vos tentatives. Le mot était", motADeviner)
-			break
-		}
-	}
-
-	// L'utilisateur peut choisir de rejouer ou de quitter le jeu.
-	fmt.Print("Voulez-vous jouer encore ? (oui/non): ")
-	var reponse string
-	fmt.Scanln(&reponse)
-	if strings.ToLower(reponse) != "oui" {
-		fmt.Println("Au revoir !")
 	}
 }
 
+// Choisi un mot aléatoire avec des lettres X et Y
 func choisirMotAvecLettres(mots []string) string {
 	rand.Seed(time.Now().UnixNano())
 	motADeviner := mots[rand.Intn(len(mots))]
 
-	return motADeviner
+	motAvecLettres := motADeviner[:2] + "XY" + motADeviner[4:]
+
+	return motAvecLettres
 }
 
 func afficherMot(mot string, lettresDevinees map[rune]bool) {
 	for _, c := range mot {
 		if c == ' ' {
 			fmt.Print("  ")
-		} else if lettresDevinees[rune(c)] || c == 'X' || c == 'Y' {
+		} else if lettresDevinees[rune(c)] {
 			fmt.Printf("%c ", c)
 		} else {
 			fmt.Print("_ ")
@@ -172,7 +184,7 @@ func chargerMotsDepuisFichier(filename string) ([]string, error) {
 
 func victoire(mot string, lettresDevinees map[rune]bool) bool {
 	for _, c := range mot {
-		if c != ' ' && !lettresDevinees[rune(c)] && c != 'X' && c != 'Y' {
+		if c != ' ' && !lettresDevinees[rune(c)] {
 			return false
 		}
 	}
