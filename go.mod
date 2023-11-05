@@ -1,0 +1,3 @@
+module HALLOWEENPENDU
+
+go 1.21.1
